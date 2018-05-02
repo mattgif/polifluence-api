@@ -5,10 +5,11 @@
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "chai-http": "^4.0.0",
     "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
     "express": "^4.16.3",
-    "mongoose": "^5.0.17"
+    "mongoose": "^5.0.17",
+    "now": "^11.1.7"
   },
   "devDependencies": {
     "mocha": "^5.1.1"
