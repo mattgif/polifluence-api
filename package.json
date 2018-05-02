@@ -15,7 +15,9 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm",
+    "alias": "now alias --token=$NOW_TOKEN"
   },
   "repository": {
     "type": "git",
