@@ -20,7 +20,9 @@
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm",
     "alias": "now alias --token=$NOW_TOKEN"
   },
-  "alias": "polifluence",
+  "now" : {
+    "alias": "polifluence",
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mattgif/polifluence-api.git"
