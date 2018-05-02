@@ -1,0 +1,30 @@
+{
+  "name": "polifluence-api",
+  "version": "1.0.0",
+  "description": "API for polifluence, an app for linking campaign contributions with legislation",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "chai-http": "^4.0.0",
+    "chai": "^4.1.2",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.17"
+  },
+  "devDependencies": {
+    "mocha": "^5.1.1"
+  },
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattgif/polifluence-api.git"
+  },
+  "author": "Matt Gifford",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattgif/polifluence-api/issues"
+  },
+  "homepage": "https://github.com/mattgif/polifluence-api#readme"
+}
