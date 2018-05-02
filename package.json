@@ -21,7 +21,7 @@
     "alias": "now alias --token=$NOW_TOKEN"
   },
   "now" : {
-    "alias": "polifluence",
+    "alias": "polifluence"
   },
   "repository": {
     "type": "git",
