@@ -3,11 +3,11 @@ node_js: 8.9
 cache: npm
 script: npm run deploy
 before_script:
-  - sleep 15
-  - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
+- sleep 15
+- mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 after_script: npm run alias
 services:
-  - mongodb
+- mongodb
 env:
   global:
     secure: Tyv8UqwdRYFgSbYNILmHJHUDX2cj3Ik13jhxmQEFhulocC9b3BssFaK6zKjP8uHn8HLjXOeW3khh/TxE7LBNNai+v6fU5jcMDz4xvda+GbVl5pYWxZ9nS9JdmejXOCqg8/mvGseG4rsnZfxxvnrfZgxbuaUaoAs1+tgO1iP5Mmw4ETOmfM2jAyPFEENXIak2VXrTh8qx+xioxBXiB7PEI3kIJYQ1Z+3H3IyRazzWoERMsSZUf0RK2VMZpkUNlwsq/W05MTN4vRh626CNr6urYMGDaV30DCIZ4wUJfdluwtdDRg5AdAzqmsHuRKtUfDLzNRFDjLQJqpjdl4HEVzcueVC+kmfFp8L21HsHhH300/XSsQwP1rn8e71VRDtM28VAmSlIDxUgGTCLkXSKVtXLaPece7os4QAkUEwp7wRLgDXcNUykUuxObtbtAYRumPJPOmdm74Vst4h88InAVxxCIrwoU1VithrLJqf3apQtiL06fgJ8PjxbuB0xOAASSMOFBOBBxGLNujBTzSmhw406fLHs1PcXFRohmtKesuih2gfrP9cAkZ92YF6sNi700Dn6eOKE0KCsZrIc5hunfM/grnTpz0Ls4veWc6fcg6CQUF8nOn8oOkMS8e6svsW14W+w4Rve+Ynbn+LJHN7qsZg8WwlNodEudsev6zYAPTESHvA=
