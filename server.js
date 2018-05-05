@@ -7,6 +7,7 @@ const { Bill } = require('./bills/models');
 const mongoose = require('mongoose');
 const { DATABASE_URL } = require('./config');
 const morgan = require('morgan');
+const { proPublicaBillToMongo, getCosponsorsFor } = require('./bills/bill-utils');
 
 mongoose.Promise = global.Promise;
 const app = express();
@@ -40,6 +41,41 @@ app.get('/api/members/:memberId', (req, res) => {
             console.error(err);
             res.status(500).json('Unexpected error retrieving data');
         });
+});
+
+app.get('/api/bills/recent', (req, res) => {
+    // return list of recent bills fro ProPublica
+    // if bills not in db, add them
+});
+
+app.get('/api/bills/:id', (req, res) => {
+    // get specific bill by its billId
+    Bill.findOne({billId: req.params.id})
+        .then(bill => {
+            if (!bill.cosponsors || bill.cosponsors.length < 1) {
+                return getCosponsorsFor(bill.billId)
+                    .then(proPubRes => {
+                        if (proPubRes.status === 'ERROR') {
+                            return Promise.reject({
+                                code: 500,
+                                message: 'error retrieving data from propublica'
+                            })
+                        }
+                        return proPubRes.json()
+                    })
+                    .then(proPubJSON => {
+                        bill.cosponsors = proPubJSON.results[0].cosponsors.map(cosponsor => cosponsor.cosponsor_id)
+                        return bill.save()
+                            .then(bill => res.status(200).json(bill.serialize()))
+                    })
+            } else {
+                res.status(200).json(bill.serialize())
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({'message': 'Unable to fulfill request'})
+        })
 });
 
 

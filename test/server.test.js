@@ -3,11 +3,14 @@ const chaiHttp = require('chai-http');
 const { app, runServer, closeServer } = require('../server');
 const { TEST_DATABASE_URL } = require('../config');
 const { Member } = require('../members/models');
+const { Bill } = require('../bills/models');
 
 const should = chai.should();
 chai.use(chaiHttp);
 
 const MEMBER_COUNT = 5;
+const BILL_COUNT = 5;
+const BILL_IDS = ['hr5670-115', 'hres413-115', 'hr845-115', 'hconres28-115', 'hr2983-115'];
 
 function seedMemberDb() {
     const members = [];
@@ -28,14 +31,29 @@ function seedMemberDb() {
     return Member.insertMany(members)
 }
 
+function seedBillDb() {
+    const bills = [];
+    for (let i = 0; i < BILL_COUNT; i++) {
+        bills.push({
+            billId: BILL_IDS[i],
+            number: i,
+            title: 'asdfasdf'
+        })
+    }
+    return Bill.insertMany(bills);
+}
+
 describe('API', function() {
     before(function() {
         return runServer(TEST_DATABASE_URL);
     });
 
-    beforeEach(function() {return seedMemberDb()});
+    beforeEach(function() {
+        return seedMemberDb()
+            .then(() => seedBillDb())
+    });
 
-    afterEach(function() {return Member.remove()});
+    afterEach(function() {return Member.remove().then(() => Bill.remove())});
 
     after(function() {
         return(closeServer())
@@ -55,7 +73,7 @@ describe('API', function() {
             });
     });
 
-    it('should 200 on GET to /api/members/:id for specifc member', function() {
+    it('should 200 on GET to /api/members/:id for specific member', function() {
        return chai.request(app)
            .get('/api/members/member0')
            .then(function(res) {
@@ -67,4 +85,14 @@ describe('API', function() {
                    'billsCosponsored', 'chamber' , 'crpId', 'shortTitle', 'topContributors')
            })
     });
+
+    it('should return 200 on GET to /api/bills/:id for specific bill', function() {
+        return chai.request(app)
+            .get(`/api/bills/${BILL_IDS[0]}`)
+            .then(function(res) {
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.an('object');
+            })
+    })
 });
