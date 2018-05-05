@@ -1,3 +1,9 @@
 module.exports.OPEN_SECRETS_API_KEY=process.env.OPEN_SECRETS_API_KEY;
+module.exports.OPEN_SECRETS_API_KEY2=process.env.OPEN_SECRETS_API_KEY2;
+module.exports.OPEN_SECRETS_API_KEY3=process.env.OPEN_SECRETS_API_KEY3;
+module.exports.OPEN_SECRETS_API_KEY4=process.env.OPEN_SECRETS_API_KEY4;
+module.exports.OPEN_SECRETS_API_KEY5=process.env.OPEN_SECRETS_API_KEY5;
 module.exports.MAPLIGHT_API_KEY=process.env.MAPLIGHT_API_KEY;
 module.exports.PROPUBLICA_API_KEY=process.env.PROPUBLICA_API_KEY;
+exports.DATABASE_URL = process.env.DATABASE_URL || global.DATABASE_URL || 'mongodb://localhost/polifluence';
+exports.TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || global.TEST_DATABASE_URL || 'mongodb://localhost/polifluence-test';

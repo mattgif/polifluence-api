@@ -10,16 +10,22 @@ const MemberSchema = new mongoose.Schema({
         required: true
     },
     shortTitle: String,
+    chamber: String,
     title: String,
     party: String,
     state: String,
     crpId: String,
-    memberId: String,
+    memberId: {
+        type: String,
+        unique: true
+    },
     website: String,
+    nextElection: String,
     billsSponsored: Array,
     billsCosponsored: Array,
     portrait: String,
     topContributors: Array,
+    topIndustries: Array,
     lastUpdated: {
         type: Date,
         required: true,
@@ -32,6 +38,8 @@ MemberSchema.methods.serialize = function() {
         firstName: this.firstName,
         lastName: this.lastName,
         shortTitle: this.shortTitle,
+        chamber: this.chamber,
+        nextElection: this.nextElection,
         title: this.title,
         party: this.party,
         state: this.state,

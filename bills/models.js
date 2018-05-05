@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const BillSchema = new mongoose.Schema({
-    bill_id: {
+    billId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     number: {
         type: String,
@@ -17,11 +18,12 @@ const BillSchema = new mongoose.Schema({
     sponsor: String,
     cosponsors: Array,
     introducedDate: String,
-    enacted: Boolean,
+    enacted: String,
     housePassage: String,
     senatePassage: String,
     summary: String,
     summaryShort: String,
+    subject: String,
     lastUpdated: {
         type: Date,
         required: true,
@@ -31,7 +33,7 @@ const BillSchema = new mongoose.Schema({
 
 BillSchema.methods.serialize = function() {
     return {
-        id: this.bill_id,
+        id: this.billId,
         number: this.number,
         title: this.title,
         shortTitle: this.shortTitle,
