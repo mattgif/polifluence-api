@@ -3,17 +3,10 @@ node_js: 8.9
 services:
 - mongodb
 cache: npm
-script: npm run deploy
-before_script:
-    - |
-      echo "Testing MongoDB connection...";tries=4;
-      i=0;
-      while [ $i -lt $tries ]; do fail=$(mongo --eval db 2>&1 >/dev/null | grep "connect failed");
-        if [ "$fail" ] && [ $[ $i+1 ] -eq $tries ] ; then echo "Error: Could not connect to mongodb"; exit 1;
-        elif [ "$fail" ]; then sleep 3; i=$[ $i+1 ];
-        else echo "OK"; i=$tries; fi;
-      done
-after_script: npm run alias
-env:
-  global:
-    secure: Tyv8UqwdRYFgSbYNILmHJHUDX2cj3Ik13jhxmQEFhulocC9b3BssFaK6zKjP8uHn8HLjXOeW3khh/TxE7LBNNai+v6fU5jcMDz4xvda+GbVl5pYWxZ9nS9JdmejXOCqg8/mvGseG4rsnZfxxvnrfZgxbuaUaoAs1+tgO1iP5Mmw4ETOmfM2jAyPFEENXIak2VXrTh8qx+xioxBXiB7PEI3kIJYQ1Z+3H3IyRazzWoERMsSZUf0RK2VMZpkUNlwsq/W05MTN4vRh626CNr6urYMGDaV30DCIZ4wUJfdluwtdDRg5AdAzqmsHuRKtUfDLzNRFDjLQJqpjdl4HEVzcueVC+kmfFp8L21HsHhH300/XSsQwP1rn8e71VRDtM28VAmSlIDxUgGTCLkXSKVtXLaPece7os4QAkUEwp7wRLgDXcNUykUuxObtbtAYRumPJPOmdm74Vst4h88InAVxxCIrwoU1VithrLJqf3apQtiL06fgJ8PjxbuB0xOAASSMOFBOBBxGLNujBTzSmhw406fLHs1PcXFRohmtKesuih2gfrP9cAkZ92YF6sNi700Dn6eOKE0KCsZrIc5hunfM/grnTpz0Ls4veWc6fcg6CQUF8nOn8oOkMS8e6svsW14W+w4Rve+Ynbn+LJHN7qsZg8WwlNodEudsev6zYAPTESHvA=
+deploy:
+  provider: heroku
+  api_key:
+    secure: U1zmTJT/YCCK1Yr1xc1gIHpW+X68CYbmhuxMEZnLVSadOzgJh0mB3ryGSPbyOVYIX67LyV+W2QeIsznvmTeb5Gy7wg3mGurI3B5hwgCMrC6ibSCTEmIROXO6jmW0DPnNCMYO1+nWcbpgevO2VR6SSOoWDie/WJIghPw5+qBMqH7n44gF4KXZCVtTQuWMhCH4vnlTxpoNHl3apUELxcArOkIgq3YjVxGwDVQQ6k0GVk6KEFI44sOqiKpBlULMuC188awtPZC4efuIFPmQ1sAmq89327LUZDBuBaerRkcwhUSiNaSL0Dhpc+Tk8PtPnR7Sk5vqhvpubyi/3QB7PxKKVSExNt74jP+TJgzNObTdek7T+lSlT92K9iLCN0VJpSDnZYK/8thuF8UCnrvSjxaiQbZHj1CFdir8kq8VMaRZR08XQ87x61w1NkwmrBhjwo0rhVMlSQaijgumQBsYQjSkBBq9XK1iXqe8Ls22Wwf001HJ2sEhxDaSpywi9w6otLDwyKQGf+sJ+zecBj1ZYAmSVXxeXDAsKp7dpaF4y6T00Y6dYP6itXAGczU+GSvzH7+amrlpd013uRwsVxyQy5aClyNxYV83Arfj4mYeEDqufm7FHQjOyrUrA5CJLHUwedLUzl+VQZsY5FZi87THydkqMbzzQSPifxQGJegCcO5FFa4=
+  app: polifluence
+  on:
+    repo: mattgif/polifluence-api
