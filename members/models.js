@@ -49,7 +49,8 @@ MemberSchema.methods.serialize = function() {
         billsSponsored: this.billsSponsored,
         billsCosponsored: this.billsCosponsored,
         portrait: this.portrait,
-        topContributors: this.topContributors
+        topContributors: this.topContributors,
+        topIndustries: this.topIndustries
     }
 };
 
