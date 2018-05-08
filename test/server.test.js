@@ -94,5 +94,33 @@ describe('API', function() {
                 res.should.be.json;
                 res.body.should.be.an('object');
             })
+    });
+
+    it('should return an array of bills sponsored and cosponsored by member', function() {
+        const memberId = 'testid123'
+        const member = {
+            firstName: 'Jane',
+            lastName: 'Doe',
+            shortTitle: 'asdf',
+            chamber: 'asdf',
+            party: 'asdf',
+            crpId: 'asdf',
+            memberId,
+            portrait: 'portrait',
+            state: 'state',
+            title: 'title',
+            billsSponsored: BILL_IDS
+        };
+
+        Member.create({ member })
+            .then(() => {
+                return chai.request(app)
+                    .get(`/api/members/${memberId}/bills`)
+                    .then(res => {
+                        expect.res.to.be.json;
+                        res.body.should.be.an('array')
+                    })
+            });
+
     })
 });

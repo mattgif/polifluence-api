@@ -43,6 +43,21 @@ app.get('/api/members/:memberId', (req, res) => {
         });
 });
 
+app.get('/api/members/:memberId/bills', (req, res) => {
+    // return all bills sponsored and cosponsored by member with memberId
+    return Member.findOne({ memberId: req.params.memberId })
+        .then(member => {
+            const { billsSponsored, billsCosponsored } = member;
+            const queryParams = { billId: { $in: [...billsSponsored, ...billsCosponsored] } };
+            return Bill.find(queryParams)
+                .then(bills => res.status(200).json({bills}))
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({message: 'Could not find bills for specified member'})
+        })
+});
+
 app.get('/api/bills/recent', (req, res) => {
     // return list of recent bills fro ProPublica
     // if bills not in db, add them
