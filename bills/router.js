@@ -1,5 +1,5 @@
 const express = require('express');
-const Bill = require('./models');
+const { Bill } = require('./models');
 const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, searchForBill } = require('./bill-utils');
 
 const router = express.Router();
