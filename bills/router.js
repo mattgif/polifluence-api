@@ -1,6 +1,7 @@
 const express = require('express');
 const { Bill } = require('./models');
-const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, searchForBill } = require('./bill-utils');
+const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills,
+    addMultipleBills, searchForBill, serializeBill } = require('./bill-utils');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get('/recent', (req, res) => {
         })
         .then(proPubRes => {
             const bills = proPubRes.results[0].bills;
-            billsToReturn = bills.map(bill => proPublicaBillToMongo(bill));
+            billsToReturn = bills.map(bill => serializeBill(proPublicaBillToMongo(bill)));
             return addMultipleBills(billsToReturn)
         })
         .then(() => res.status(200).json({bills: billsToReturn}))
@@ -53,7 +54,7 @@ router.get('/search', (req, res) => {
         })
         .then(proPubRes => {
             const bills = proPubRes.results[0].bills;
-            billsToReturn = bills.map(bill => proPublicaBillToMongo(bill));
+            billsToReturn = bills.map(bill => serializeBill(proPublicaBillToMongo(bill)));
             return addMultipleBills(billsToReturn)
         })
         .then(() => res.status(200).json({bills: billsToReturn}))

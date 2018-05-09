@@ -6,6 +6,25 @@ const { PROPUBLICA_API_KEY } = require('../config');
 const PROPUBLICA_BASE_API = 'https://api.propublica.org/congress/v1';
 const UPDATEABLE_FIELDS = ['enacted', 'housePassage', 'senatePassage'];
 
+function serializeBill(bill) {
+    // formats bill as it would be returned from mongo with .serialize()
+    // used for returning results from ProPub without having to wait for Db queries
+    return {
+        id: bill.billId,
+        number: bill.number,
+        title: bill.title,
+        shortTitle: bill.shortTitle,
+        sponsor: bill.sponsor,
+        cosponsors: bill.cosponsors,
+        introducedDate: bill.introducedDate,
+        enacted: bill.enacted,
+        housePassage: bill.housePassage,
+        senatePassage: bill.senatePassage,
+        summary: bill.summary,
+        summaryShort: bill.summaryShort,
+    }
+}
+
 function proPublicaBillToMongo(bill) {
     return {
         billId: bill.bill_id,
@@ -83,4 +102,4 @@ function searchForBill(query) {
     })
 }
 
-module.exports = { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, addBill, searchForBill };
+module.exports = { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, serializeBill, searchForBill };
