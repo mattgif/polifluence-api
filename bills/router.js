@@ -21,8 +21,9 @@ router.get('/recent', (req, res) => {
         })
         .then(proPubRes => {
             const bills = proPubRes.results[0].bills;
-            billsToReturn = bills.map(bill => serializeBill(proPublicaBillToMongo(bill)));
-            return addMultipleBills(billsToReturn)
+            const billsToAdd = bills.map(bill => proPublicaBillToMongo(bill));
+            billsToReturn = billsToAdd.map(bill => serializeBill(bill));
+            return addMultipleBills(billsToAdd)
         })
         .then(() => res.status(200).json({bills: billsToReturn}))
         .catch(err => {
@@ -54,13 +55,14 @@ router.get('/search', (req, res) => {
         })
         .then(proPubRes => {
             const bills = proPubRes.results[0].bills;
-            billsToReturn = bills.map(bill => serializeBill(proPublicaBillToMongo(bill)));
-            return addMultipleBills(billsToReturn)
+            const billsToAdd = bills.map(bill => proPublicaBillToMongo(bill));
+            billsToReturn = billsToAdd.map(bill => serializeBill(bill));
+            return addMultipleBills(billsToAdd)
         })
         .then(() => res.status(200).json({bills: billsToReturn}))
         .catch(err => {
             console.error(err);
-            return res.status(500).json({message: 'Error searhing for bills'})
+            return res.status(500).json({message: 'Error searching for bills'})
         })
 });
 
