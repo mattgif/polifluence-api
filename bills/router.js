@@ -1,6 +1,6 @@
 const express = require('express');
 const Bill = require('./models');
-const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, addBill } = require('./bill-utils');
+const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, searchForBill } = require('./bill-utils');
 
 const router = express.Router();
 
@@ -27,6 +27,39 @@ router.get('/recent', (req, res) => {
         .catch(err => {
             console.error(err);
             return res.status(500).json({message: 'Error retrieving recent bills'})
+        })
+});
+
+router.get('/search', (req, res) => {
+    const query = req.query.term;
+    if (!query) {
+        return res.status(422).json({
+            code: 422,
+            status: 422,
+            reason: 'MissingSearchTerm',
+            message: 'term query is required'
+        })
+    }
+    let billsToReturn;
+    return searchForBill(query)
+        .then(proPubRes => {
+            if (proPubRes.status === 'ERROR') {
+                return Promise.reject({
+                    code: 500,
+                    message: 'error retrieving data from propublica'
+                })
+            }
+            return proPubRes.json()
+        })
+        .then(proPubRes => {
+            const bills = proPubRes.results[0].bills;
+            billsToReturn = bills.map(bill => proPublicaBillToMongo(bill));
+            return addMultipleBills(billsToReturn)
+        })
+        .then(() => res.status(200).json({bills: billsToReturn}))
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({message: 'Error searhing for bills'})
         })
 });
 

@@ -51,7 +51,6 @@ function getRecentlyEnactedBills() {
 }
 
 function addMultipleBills(billArray) {
-    console.log(billArray);
     return Promise.all(billArray.map(bill => addBill(bill)))
 }
 
@@ -69,7 +68,19 @@ function addBill(billToAdd) {
                 return bill.save()
             }
             return Bill.create(billToAdd)
+                .then(bill => getCosponsorsFor(bill.billId))
         })
+
 }
 
-module.exports = { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, addBill };
+function searchForBill(query) {
+    // returns Propublica response for keyword query on bill
+    return fetch(`${PROPUBLICA_BASE_API}/bills/search.json?query=${query}`, {
+        method: 'GET',
+        headers: {
+            'X-API-Key': PROPUBLICA_API_KEY
+        }
+    })
+}
+
+module.exports = { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, addBill, searchForBill };
