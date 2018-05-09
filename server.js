@@ -50,7 +50,10 @@ app.get('/api/members/:memberId/bills', (req, res) => {
             const { billsSponsored, billsCosponsored } = member;
             const queryParams = { billId: { $in: [...billsSponsored, ...billsCosponsored] } };
             return Bill.find(queryParams)
-                .then(bills => res.status(200).json({bills}))
+                .then(_bills => {
+                    const bills = _bills.map(bill => bill.serialize());
+                    res.status(200).json({bills})
+                })
         })
         .catch(err => {
             console.error(err);
