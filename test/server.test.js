@@ -121,6 +121,5 @@ describe('API', function() {
                         res.body.should.be.an('array')
                     })
             });
-
     })
 });
