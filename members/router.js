@@ -1,8 +1,16 @@
 const express = require('express');
 const { Member } = require('./models');
 const { Bill } = require('../bills/models');
+const { fetchSpecificMember, addMember } = require('./member-utils');
 
 const router = express.Router();
+const MAX_MEMBER_OBJECT_AGE = 30; // age of member object in days before update
+
+function ageInDays(lastUpdated) {
+    // calculates difference in days between given date and now
+    const today = Date.now();
+    return Math.round(Math.abs(today - lastUpdated) / 8.64e7)
+}
 
 router.get('/', (req, res) => {
     // returns all members
@@ -19,7 +27,16 @@ router.get('/', (req, res) => {
 router.get('/:memberId', (req, res) => {
     // get specific member
     return Member.findOne({memberId: req.params.memberId })
-        .then(member => res.status(200).json(member.serialize()))
+        .then(member => {
+            if (!member || ageInDays(member.lastUpdated) > MAX_MEMBER_OBJECT_AGE) {
+                return fetchSpecificMember(req.params.memberId)
+                    .then(proPublicaResult => {
+                        return addMember(proPublicaResult)
+                    })
+                    .then(member => res.status(200).json(member.serialize()))
+            }
+            return res.status(200).json(member.serialize())
+        })
         .catch(err => {
             console.error(err);
             res.status(500).json('Unexpected error retrieving data');

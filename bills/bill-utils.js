@@ -71,6 +71,7 @@ function getRecentlyEnactedBills() {
 }
 
 function addMultipleBills(billArray) {
+    // takes array of mongoformatted bills and adds to db
     return Promise.all(billArray.map(bill => addBill(bill)))
 }
 
@@ -90,7 +91,6 @@ function addBill(billToAdd) {
             return Bill.create(billToAdd)
                 .then(bill => getCosponsorsFor(bill.billId))
         })
-
 }
 
 function searchForBill(query) {
@@ -103,7 +103,9 @@ function searchForBill(query) {
     })
 }
 
-function getSpecificBill(billId) {
+function getSpecificBill(_billId) {
+    const billId = _billId.slice(0,_billId.length-4);
+    let billToReturn;
     // returns ProPublica bill object
     return fetch(`${PROPUBLICA_BASE_API}/115/bills/${billId}.json`, {
         method: 'GET',
@@ -111,6 +113,35 @@ function getSpecificBill(billId) {
             'X-API-Key': PROPUBLICA_API_KEY
         }
     })
+        .then(proPubRes => {
+            if (proPubRes.status === 'ERROR') {
+                return Promise.reject({
+                    code: 500,
+                    message: 'error retrieving data from propublica'
+                })
+            }
+            return proPubRes.json()
+        })
+        .then(proPubRes => {
+            if (!proPubRes.results) {
+                return Promise.reject({
+                    code: 500,
+                    message: 'error retrieving data from propublica'
+                })
+            }
+            const foundBill = proPubRes.results[0];
+            const billToAdd = proPublicaBillToMongo(foundBill);
+            billToReturn = serializeBill(billToAdd);
+            return addBill(billToAdd)
+        })
+        .then(() => billToReturn);
 }
 
-module.exports = { addBill, proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, serializeBill, searchForBill, getSpecificBill };
+function ageInDays(lastUpdated) {
+    // calculates difference in days between given date and now
+    const today = Date.now();
+    return Math.round(Math.abs(today - lastUpdated) / 8.64e7)
+}
+
+module.exports = { ageInDays, proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills,
+    addMultipleBills, serializeBill, searchForBill, getSpecificBill };
