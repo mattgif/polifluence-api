@@ -45,6 +45,7 @@ BillSchema.methods.serialize = function() {
         senatePassage: this.senatePassage,
         summary: this.summary,
         summaryShort: this.summaryShort,
+        subject: this.subject
     }
 };
 
