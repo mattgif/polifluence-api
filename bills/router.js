@@ -120,7 +120,7 @@ router.get('/:id', (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(500).json({'message': 'Unable to retrieve bill data from ProPublica'})
+            res.status(204) // no data found, no reason to bug the client
         })
 });
 
