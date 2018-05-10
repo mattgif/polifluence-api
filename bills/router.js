@@ -82,8 +82,9 @@ router.get('/:id', (req, res) => {
                                 code: 500,
                                 message: 'error retrieving data from propublica'
                             })
+                        } else {
+                            return proPubRes.json()
                         }
-                        return proPubRes.json()
                     })
                     .then(proPubRes => {
                         const foundBill = proPubRes.results[0];
@@ -103,8 +104,9 @@ router.get('/:id', (req, res) => {
                                 code: 500,
                                 message: 'error retrieving data from propublica'
                             })
+                        } else {
+                            return proPubRes.json()
                         }
-                        return proPubRes.json()
                     })
                     .then(proPubJSON => {
                         bill.cosponsors = proPubJSON.results[0].cosponsors.map(cosponsor => cosponsor.cosponsor_id)
@@ -118,7 +120,7 @@ router.get('/:id', (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(500).json({'message': 'Unable to fulfill request'})
+            res.status(500).json({'message': 'Unable to retrieve bill data from ProPublica'})
         })
 });
 
