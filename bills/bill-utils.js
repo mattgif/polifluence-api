@@ -20,6 +20,7 @@ function serializeBill(bill) {
         enacted: bill.enacted,
         housePassage: bill.housePassage,
         senatePassage: bill.senatePassage,
+        subject: bill.subject,
         summary: bill.summary,
         summaryShort: bill.summaryShort,
     }
