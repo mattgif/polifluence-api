@@ -103,4 +103,14 @@ function searchForBill(query) {
     })
 }
 
-module.exports = { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, serializeBill, searchForBill };
+function getSpecificBill(billId) {
+    // returns ProPublica bill object
+    return fetch(`${PROPUBLICA_BASE_API}/115/bills/${billId}.json`, {
+        method: 'GET',
+        headers: {
+            'X-API-Key': PROPUBLICA_API_KEY
+        }
+    })
+}
+
+module.exports = { addBill, proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills, addMultipleBills, serializeBill, searchForBill, getSpecificBill };

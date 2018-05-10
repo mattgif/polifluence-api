@@ -1,7 +1,7 @@
 const express = require('express');
 const { Bill } = require('./models');
 const { proPublicaBillToMongo, getCosponsorsFor, getRecentlyEnactedBills,
-    addMultipleBills, searchForBill, serializeBill } = require('./bill-utils');
+    addMultipleBills, searchForBill, serializeBill, getSpecificBill, addBill } = require('./bill-utils');
 
 const router = express.Router();
 
@@ -68,9 +68,34 @@ router.get('/search', (req, res) => {
 
 router.get('/:id', (req, res) => {
     // get specific bill by its billId
+    // if it's not in the dB, grab it from propub, add to dB and return it
+    // if it's in dB, but lacks cosponsor info, try to get cosponsor info from proPub, updated dB and return
+    let billToReturn;
     Bill.findOne({billId: req.params.id})
         .then(bill => {
+            if (!bill) {
+                // bill not in db
+                return getSpecificBill(req.params.id)
+                    .then(proPubRes => {
+                        if (proPubRes.status === 'ERROR') {
+                            return Promise.reject({
+                                code: 500,
+                                message: 'error retrieving data from propublica'
+                            })
+                        }
+                        return proPubRes.json()
+                    })
+                    .then(proPubRes => {
+                        const foundBill = proPubRes.results[0];
+                        const billToAdd = proPublicaBillToMongo(foundBill);
+                        billToReturn = serializeBill(billToAdd);
+                        return addBill(billToAdd)
+                    })
+                    .then(() => res.status(200).json(billToReturn))
+            }
+
             if (!bill.cosponsors || bill.cosponsors.length < 1) {
+                // bill in dB, but no cosponsor info
                 return getCosponsorsFor(bill.billId)
                     .then(proPubRes => {
                         if (proPubRes.status === 'ERROR') {
@@ -87,6 +112,7 @@ router.get('/:id', (req, res) => {
                             .then(bill => res.status(200).json(bill.serialize()))
                     })
             } else {
+                // found bill, all is well
                 res.status(200).json(bill.serialize())
             }
         })
