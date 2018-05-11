@@ -1,7 +1,7 @@
 const express = require('express');
 const { Member } = require('./models');
 const { Bill } = require('../bills/models');
-const { fetchSpecificMember, addMember } = require('./member-utils');
+const { fetchSpecificMember, addMember, fetchIndustryDataFromOpenSecrets, fetchContributorDataFromOpenSecrets } = require('./member-utils');
 
 const router = express.Router();
 const MAX_MEMBER_OBJECT_AGE = 30; // age of member object in days before update
@@ -41,6 +41,27 @@ router.get('/:memberId', (req, res) => {
             console.error(err);
             res.status(500).json('Unexpected error retrieving data');
         });
+});
+
+router.get('/:crpId/contributions', (req, res) => {
+    const crpId = req.params.crpId;
+    let topContributors, topIndustries;
+    return fetchContributorDataFromOpenSecrets(crpId)
+        .then(contribData => {
+            topContributors = contribData;
+            return fetchIndustryDataFromOpenSecrets(crpId)
+        })
+        .then(indusData => {
+            topIndustries = indusData;
+            return Member.findOne({ crpId })
+        })
+        .then(member => {
+            member.topContributors = topContributors;
+            member.topIndustries = topIndustries;
+            return member.save()
+        })
+        .then(member => res.status(200).json(member))
+        .catch(() => res.status(500).json('Error retrieving finance data from OpenSecrets'))
 });
 
 router.get('/:memberId/bills', (req, res) => {

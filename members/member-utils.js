@@ -1,7 +1,8 @@
 'use strict';
 const fetch = require('node-fetch');
 const {Member} = require('./models');
-const { PROPUBLICA_API_KEY } = require('../config');
+const { PROPUBLICA_API_KEY, OPEN_SECRETS_API_KEY, OPEN_SECRETS_API_KEY2, OPEN_SECRETS_API_KEY3, OPEN_SECRETS_API_KEY4,
+    OPEN_SECRETS_API_KEY5, OPEN_SECRETS_API_KEY6, OPEN_SECRETS_API_KEY7, OPEN_SECRETS_API_KEY8, OPEN_SECRETS_API_KEY9 } = require('../config');
 const { proPublicaBillToMongo, addMultipleBills } = require('../bills/bill-utils');
 
 const PROPUBLICA_BASE_API = 'https://api.propublica.org/congress/v1';
@@ -133,4 +134,46 @@ function proPublicaMemberToMongo(member) {
     }
 }
 
-module.exports = { fetchSpecificMember, proPublicaMemberToMongo, addMember };
+function formatOSContributorData(data) {
+    return data.response.contributors.contributor.map(_con => {
+        const con = _con['@attributes']
+        return {
+            contributor: con.org_name,
+            total: con.total,
+            pacs: con.pacs,
+            indivs: con.indivs
+        }
+    })
+}
+
+function formatOSIndustryData(data) {
+    return data.response.industries.industry.map(_ind => {
+        const ind = _ind['@attributes'];
+        return {
+            code: ind.industry_code,
+            name: ind.industry_name,
+            indivs: ind.indivs,
+            pacs: ind.pacs,
+            total: ind.total
+        }
+    })
+}
+
+function fetchContributorDataFromOpenSecrets(crpId) {
+    const keys = [OPEN_SECRETS_API_KEY, OPEN_SECRETS_API_KEY2, OPEN_SECRETS_API_KEY3, OPEN_SECRETS_API_KEY4,
+        OPEN_SECRETS_API_KEY5, OPEN_SECRETS_API_KEY6, OPEN_SECRETS_API_KEY7, OPEN_SECRETS_API_KEY8,
+        OPEN_SECRETS_API_KEY9];
+    return fetch(`https://www.opensecrets.org/api/?method=candContrib&cid=${crpId}&cycle=2018&output=json&apikey=${OPEN_SECRETS_API_KEY}`)
+        .then(res => res.json())
+        .then(data => formatOSContributorData(data))
+        .catch(err => 'Error retrieving contributor data from OpenSecrets');
+}
+
+function fetchIndustryDataFromOpenSecrets(crpId) {
+    return fetch(`https://www.opensecrets.org/api/?method=candIndustry&cid=${crpId}&cycle=2018&output=json&apikey=${OPEN_SECRETS_API_KEY2}`)
+        .then(res => res.json())
+        .then(data => formatOSIndustryData(data))
+        .catch(err => 'Error retrieving industry data from OpenSecrets');
+}
+
+module.exports = { fetchSpecificMember, fetchIndustryDataFromOpenSecrets, fetchContributorDataFromOpenSecrets, addMember };
